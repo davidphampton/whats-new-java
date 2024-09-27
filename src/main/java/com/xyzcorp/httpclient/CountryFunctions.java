@@ -13,11 +13,10 @@ public class CountryFunctions {
             map.values()
                .stream()
                .filter(c -> c.getLanguages().contains(language))
-               .filter(c -> c.getRegion().equals(region))
+               .filter(c -> region.equals(c.getRegion()))
                .map(Country::getName)
                .sorted()
                .collect(Collectors.joining(", "));
-        System.out.println("This never completes");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(language);
         stringBuilder.append(" countries in ");

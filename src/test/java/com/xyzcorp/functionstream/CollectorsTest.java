@@ -1,4 +1,4 @@
-package com.xyzcorp.collectors;
+package com.xyzcorp.functionstream;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,10 +9,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NewCollectorsTest {
+public class CollectorsTest {
     @SuppressWarnings("SimplifyStreamApiCallChains")
     @Test
     void testToUnmodifiableList() {
@@ -32,6 +31,14 @@ public class NewCollectorsTest {
         assertThat(evenSet).isEqualTo(Set.of(2,4));
     }
 
+    void testToSet() {
+        List<Integer> evenSet =
+            List.of(1, 2, 3, 4).stream()
+                .filter(i -> i % 2 == 0)
+                .toList();
+        assertThat(evenSet).isEqualTo(Set.of(2,4));
+    }
+
     @Test
     void testToUnmodifiableMap() {
         Map<Integer, Double> map =
@@ -45,12 +52,9 @@ public class NewCollectorsTest {
     }
 
     @Test
-    void testTeeing() {
-        double average = Stream.of(1, 4, 2, 7, 4, 6, 5)
-                               .collect(teeing(
-                                   summingDouble(i -> i),
-                                   counting(),
-                                   (sum, n) -> sum / n));
-        System.out.println(average);
+    void testToList() {
+        List<Integer> list =
+            Stream.of(1, 2, 3, 4).map(x -> x * 4).toList();
+        assertThat(list).contains(4, 8);
     }
 }

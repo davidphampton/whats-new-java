@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,7 +15,7 @@ public class TypeInferenceTest {
     @SuppressWarnings("RedundantTypeArguments")
     @Test
     void testBeforeTypeInference() {
-        List<String> cs = Collections.<String>emptyList();
+        List<String> cs = Collections.emptyList();
         assertThat(cs).isEmpty();
     }
 
@@ -39,6 +40,14 @@ public class TypeInferenceTest {
         }
     }
 
+    @Test
+    void testWhyWeMayNeedTypeInference() {
+        var lists = List.of(List.of(List.of(1, 2, 3),
+            List.of(4, 5,
+                6), List.of(30, 10, 50, 102)));
+        System.out.println(lists);
+    }
+
     @SuppressWarnings("unused")
     @Test
     void testPolymorphismWithVar() {
@@ -51,12 +60,50 @@ public class TypeInferenceTest {
     //   a + b
     // }
 
+    /* loops can have a var */
+    @SuppressWarnings({"StringRepeatCanBeUsed", "unused"})
+    public String times(int n, String s) {
+        StringBuilder sb = new StringBuilder();
+        for (var i = 0; i < n; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
     // You cannot assign to null either
     // var x = null;
 
     // This will not work either
     //  var x = () -> {}
 
+
+    @Test
+    void testLifeWithoutNonDenotableTypes() {
+
+        record MyHolder(int value) {
+            public int after() {
+                return value + 1;
+            }
+
+            public int before() {
+                return value - 1;
+            }
+
+            public int negative() {
+                return -value;
+            }
+        }
+
+
+        var result = Stream.of(1, 2, 3, 4, 5)
+            .map(MyHolder::new);
+
+
+        result.forEach(o ->
+            System.out.printf("Before: %d, After: %d, Negative: %d\n",
+                o.before(), o.after(), o.negative()));
+
+    }
 
     /**
      * In the following, what is the type?
@@ -76,6 +123,10 @@ public class TypeInferenceTest {
         System.out.println(a.age);
     }
 
+    /**
+     * Couple of examples ago, we used a record, here we use a non-denotable
+     * type to avoid the overhead of creating an additional object.
+     */
     @SuppressWarnings("SimplifyStreamApiCallChains")
     @Test
     void usingANonDenotableTypeToPassInAction() {

@@ -2,6 +2,8 @@ package com.xyzcorp.processhandles;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 public class ProcessHandlesTest {
     @Test
     void processHandlesTest() {
@@ -11,6 +13,14 @@ public class ProcessHandlesTest {
     @Test
     void processDescendentsTest() {
         ProcessHandle current = ProcessHandle.current();
-        System.out.printf("Process Descendents %s%n", current.descendants());
+        current.descendants().forEach(System.out::println);
+    }
+
+    @Test
+    void createProcess() throws IOException, InterruptedException {
+        Process process = Runtime.getRuntime().exec(
+            new String[]{"python", "-version"});
+        System.out.println(process.pid());
+        Thread.sleep(10000);
     }
 }

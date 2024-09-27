@@ -1,23 +1,26 @@
 package com.xyzcorp.enhancedswitch;
 
-import org.junit.jupiter.api.Test;
+import static java.time.Month.JANUARY;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDate;
 import java.time.Month;
 
-import static java.time.Month.*;
-import static java.time.temporal.ChronoUnit.YEARS;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 public class EnhancedSwitchTest {
 
     private final Month birthMonth = JANUARY;
 
+    /**
+     * There is a difference between a statement and an expression
+     * statement does things without any form of return - there is usually mutability
+     * expression does things and returns the result - there is usually *immutability*
+     */
     @SuppressWarnings("EnhancedSwitchMigration")
     @Test
     void testBasicSwitch() {
-        var result = 0;
-        switch (birthMonth) {
+        int result = 0;
+        switch (birthMonth) { //switch statement
             case JANUARY:
             case MARCH:
             case MAY:
@@ -41,7 +44,7 @@ public class EnhancedSwitchTest {
 
     @Test
     void testEnhancedSwitchWithYield() {
-        var result = switch (birthMonth) {
+        final var result = switch (birthMonth) {  //expression
             case JANUARY, MARCH, MAY, JULY, AUGUST, OCTOBER, DECEMBER:
                 yield 31;
             case APRIL, JUNE, SEPTEMBER, NOVEMBER:
@@ -54,7 +57,7 @@ public class EnhancedSwitchTest {
 
     @Test
     void testEnhancedSwitch() {
-        var result = switch (birthMonth) {
+        final var result = switch (birthMonth) {
             case JANUARY, MARCH, MAY, JULY, AUGUST, OCTOBER, DECEMBER -> 31;
             case APRIL, JUNE, SEPTEMBER, NOVEMBER -> 30;
             default -> 29;
@@ -64,7 +67,6 @@ public class EnhancedSwitchTest {
 
     @Test
     void testPerformingActionWithinACase() {
-        int year = LocalDate.now().getYear();
         var result = switch (birthMonth) {
             case JANUARY, MARCH, MAY, JULY, AUGUST, OCTOBER, DECEMBER:
                 System.out.println("Did something first");
@@ -76,5 +78,17 @@ public class EnhancedSwitchTest {
                 yield 28;
         };
         assertThat(result).isEqualTo(31);
+    }
+
+    @Test
+    void testPerformingExpressionInsideOfSysOut() {
+        System.out.println(switch (birthMonth) {
+            case JANUARY, MARCH, MAY, JULY, AUGUST, OCTOBER, DECEMBER:
+                yield 31;
+            case APRIL, JUNE, SEPTEMBER, NOVEMBER:
+                yield 30;
+            default:
+                yield 28;
+        });
     }
 }

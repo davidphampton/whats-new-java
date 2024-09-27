@@ -5,11 +5,24 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StringAdditionsTest {
+
+
+    @Test
+    void testChars() {
+        IntStream chars = "Hello, is it me you're looking for?".chars();
+        OptionalInt maxChar = chars.max();
+        if (maxChar.isPresent()) {
+            System.out.println(maxChar.getAsInt());
+            System.out.println((char)(maxChar.getAsInt()));
+        }
+    }
 
     /**
      * Returns a string whose value is the concatenation of this string
@@ -72,7 +85,7 @@ public class StringAdditionsTest {
 
     @Test
     void testLines() {
-        var lines = """
+        var text = """
             Come with me
             And you'll be
             In a world of pure imagination
@@ -87,13 +100,13 @@ public class StringAdditionsTest {
             Will defy
             Explanation""";
 
-        Map<String, List<String>> collect = lines
+        Map<String, List<String>> collect = text
             .lines()
             .map(String::toLowerCase)
             .flatMap(s -> Arrays.stream(s.split(" ")))
             .distinct()
             .collect(Collectors.groupingBy(s -> String.valueOf(s.charAt(0))));
 
-        assertThat(collect.get("w")).contains("we'll", "will", "what");
+        assertThat(collect.get("w")).contains("we'll", "will", "what", "with");
     }
 }
